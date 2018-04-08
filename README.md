@@ -8,6 +8,8 @@
 
 [Python](myLearningPython.md)
 
+[Numpy](myLearningNumpy.md)
+
 ### Version Control
 
 [Git](myLearningGit.md)
