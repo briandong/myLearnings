@@ -49,8 +49,6 @@ end
 * -e: 执行后续脚本，支持多个-e
 > $ ruby -e 'puts "hello world"'
 
-> hello world
-
 ### grep
 * -n: 为执行脚本隐式地套上一层'while gets(); ... end'
 > $ ruby -ne 'puts $_ if $_ =~ /andre/' /etc/passwd /etc/group
@@ -99,3 +97,105 @@ end
 
 * -rlibrary: 执行代码前包含需要的库
 > $ ruby -rfileutils -e '...'
+
+## 性能
+
+### 性能分析
+
+#### time (UNIX)
+
+> $ time ruby -e '10000.times {1+2}'
+>
+> real    0m0.164s
+> user    0m0.000s
+> sys     0m0.015s
+
+* real: 总时间
+* user: 用户操作
+* sys: 系统操作
+* real - (user + sys) = 进程挂起等待时间
+
+
+#### Benchmark (Ruby)
+
+##### 性能基准测量
+
+```ruby
+require "benchmark"
+require "pp"
+
+integers = (1..100000).to_a
+pp Benchmark.measure {integers.map {|i| i*i}}
+```
+> #<Benchmark::Tms:0x0000000003acac08
+>  @cstime=0.0,
+>  @cutime=0.0,
+>  @label="",
+>  @real=0.01246070900003815,
+>  @stime=0.0,
+>  @total=0.016,
+>  @utime=0.016>
+
+* total = stime + utime
+
+##### 不同算法的性能基准测量
+
+```ruby
+require "benchmark"
+
+Benchmark.bm(10) do |b|
+    b.report("simple") {50000.times {1+2}}
+    b.report("complex") {50000.times {1+2+3-2-4+5-3}}
+    b.report("stupid") {50000.times {("1".to_i + "2".to_i).to_s.to_i}}
+end
+```
+
+>                                 user     system      total        real
+>                 simple       0.000000   0.000000   0.000000 (  0.001822)
+>                 complex      0.000000   0.000000   0.000000 (  0.002656)
+>                 stupid       0.016000   0.000000   0.016000 (  0.012924)
+
+* 传递给bm的参数10代表了打印表格的列宽
+
+##### 带彩排的性能基准测量
+
+```ruby
+require "benchmark"
+
+Benchmark.bmbm(10) do |b|
+    b.report("readlines") do
+		IO.readlines("testfile").find {|line| line =~ /radish/}
+	end
+    b.report("each") do
+		found_line = nil
+		File.open("testfile").each do |line|
+			if line =~ /radish/
+				found_line = line
+				break
+			end
+		end
+	end
+end
+```
+
+#### Profiler (Ruby)
+
+```ruby
+require "profile"
+
+def factorial(n)
+	n>1? n*factorial(n-1):1
+end
+
+factorial(10000)
+```
+
+>   %   cumulative   self                            self     total
+>  time   seconds   seconds    calls  ms/call  ms/call  name
+>  65.96     0.09      0.09    10000    0.01     61.53  Object#factorial
+>  34.04     0.14      0.05     9987     0.00       0.00  Integer#*
+>   0.00      0.14      0.00            1     0.00       0.00  Module#method_added
+>   0.00      0.14      0.00            1     0.00       0.00  TracePoint#disable
+>   0.00      0.14      0.00            1     0.00       0.00  TracePoint#enable
+>   0.00      0.14      0.00            1     0.00   141.00  #toplevel
+
