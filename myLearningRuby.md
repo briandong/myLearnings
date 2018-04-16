@@ -59,7 +59,7 @@ end
 * -p: 在-n循环的基础上额外提供打印输出$_
 > $ ruby -pe '$_ = "#" + $_' ruby_script.rb
 
-* -i: 直接修改原文件，如果提供扩展名就备份原文件
+* -i[extension]: 直接修改原文件，如果提供extension扩展名就备份原文件
 > $ ruby -i.bak -pe '$_ = "#" + $_' *.rb
 
 去掉所有注释行
@@ -71,6 +71,30 @@ end
 
 > $ ruby -ne 'open("/tmp/user_#{$.}", "w") {|f| f.puts $_ })' user_info
 
-### 分割字段
+### 分隔字段
 * -a: -n/-p时，自动把$_的内容分割到名为$F的数组
 > $ ruby -a -ne 'open("/tmp/user_#{$.}", "w") {|f| f.puts $F })' user_info
+
+* -Fpattern: -a时指定分隔符pattern
+> $ ruby -a -F, -i -ne 'puts $F.values_at(1, 0, 2, 3).join("\t")' contacts
+
+### 分隔记录
+* -0[octal]: 指定记录分隔符（八进制编码），默认是换行符
+> $ ruby -015 -ne 'puts $_ if $_ =~ /foot/' /usr/share/dict/mac_words
+
+> (015是老式Mac回车符\r的编码)
+
+* -l: 处理完成后把记录分隔符自动加回到末尾
+> $ ruby -015 -l -pe '$_ = $_.size' /usr/share/dict/mac_words
+
+### 路径
+
+> $ ruby -e 'puts Dir["*.c"].find{|f| File.size(f) > 1024}.sort_by{|f| file.mtime(f)}'
+
+### 定时监控
+
+> $ ruby -e 'system "clear; ls -lahG" while sleep 1'
+
+### require library
+
+* -rlibrary: 执行代码前包含需要的库
