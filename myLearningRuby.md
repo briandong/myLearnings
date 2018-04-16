@@ -98,3 +98,4 @@ end
 ### require library
 
 * -rlibrary: 执行代码前包含需要的库
+> $ ruby -rfileutils -e '...'
