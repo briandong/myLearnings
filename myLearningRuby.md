@@ -144,9 +144,9 @@ pp Benchmark.measure {integers.map {|i| i*i}}
 require "benchmark"
 
 Benchmark.bm(10) do |b|
-    b.report("simple") {50000.times {1+2}}
-    b.report("complex") {50000.times {1+2+3-2-4+5-3}}
-    b.report("stupid") {50000.times {("1".to_i + "2".to_i).to_s.to_i}}
+  b.report("simple") {50000.times {1+2}}
+  b.report("complex") {50000.times {1+2+3-2-4+5-3}}
+  b.report("stupid") {50000.times {("1".to_i + "2".to_i).to_s.to_i}}
 end
 ```
 
@@ -163,18 +163,18 @@ end
 require "benchmark"
 
 Benchmark.bmbm(10) do |b|
-    b.report("readlines") do
-		IO.readlines("testfile").find {|line| line =~ /radish/}
-	end
-    b.report("each") do
-		found_line = nil
-		File.open("testfile").each do |line|
-			if line =~ /radish/
-				found_line = line
-				break
-			end
-		end
-	end
+  b.report("readlines") do
+    IO.readlines("testfile").find {|line| line =~ /radish/}
+  end
+  b.report("each") do
+    found_line = nil
+    File.open("testfile").each do |line|
+      if line =~ /radish/
+	found_line = line
+	break
+      end
+    end
+  end
 end
 ```
 
@@ -185,7 +185,7 @@ end
 require "profile"
 
 def factorial(n)
-	n>1? n*factorial(n-1):1
+  n>1? n*factorial(n-1):1
 end
 
 factorial(10000)
@@ -205,7 +205,7 @@ factorial(10000)
 require "profile"
 
 def factorial(n)
-    (2..n).to_a.inject(1) {|product, i| product*i}
+  (2..n).to_a.inject(1) {|product, i| product*i}
 end
 
 Profiler__.start_profile
@@ -221,13 +221,13 @@ Profiler__.print_profile($stdout)
 # slow, 13.42sec
 words = []
 paragraph.each do |word|
-    words << word unless words.include?(word)
+  words << word unless words.include?(word)
 end
 
 # versus 0.04sec
 words = {}
 paragraph.each do |word|
-    words[word] = nil
+  words[word] = nil
 end
 words = words.keys
 ```
@@ -237,12 +237,12 @@ require "benchmark"
 
 NUM_TRIALS = 10**7
 Benchmark.bmbm(10) do |b|
-    b.report("symbol") do
-        NUM_TRIALS.times {me = :andre} #faster
-    end
-    b.report("string") do
-        NUM_TRIALS.times {me = "andre"} #slower
-    end
+  b.report("symbol") do
+    NUM_TRIALS.times {me = :andre} #faster
+  end
+  b.report("string") do
+    NUM_TRIALS.times {me = "andre"} #slower
+  end
 end
 ```
 #### 减轻内存分配等副作用
@@ -326,3 +326,5 @@ end
 ```
 
 ### 宏
+Mix-in
+
