@@ -180,6 +180,7 @@ end
 
 #### Profiler (Ruby)
 
+##### 简单性能分析
 ```ruby
 require "profile"
 
@@ -199,3 +200,81 @@ factorial(10000)
 >   0.00      0.14      0.00            1     0.00       0.00  TracePoint#enable
 >   0.00      0.14      0.00            1     0.00   141.00  #toplevel
 
+##### 细粒度性能分析
+```ruby
+require "profile"
+
+def factorial(n)
+    (2..n).to_a.inject(1) {|product, i| product*i}
+end
+
+Profiler__.start_profile
+factorial(10000)
+Profiler__.stop_profile
+Profiler__.print_profile($stdout)
+```
+
+### 性能优化
+
+#### 算法优化
+```ruby
+# slow, 13.42sec
+words = []
+paragraph.each do |word|
+    words << word unless words.include?(word)
+end
+
+# versus 0.04sec
+words = {}
+paragraph.each do |word|
+    words[word] = nil
+end
+words = words.keys
+```
+#### 语句优化
+```ruby
+require "benchmark"
+
+NUM_TRIALS = 10**7
+Benchmark.bmbm(10) do |b|
+    b.report("symbol") do
+        NUM_TRIALS.times {me = :andre} #faster
+    end
+    b.report("string") do
+        NUM_TRIALS.times {me = "andre"} #slower
+    end
+end
+```
+#### 减轻内存分配等副作用
+```ruby
+class Employee
+  def initialize
+    @embezzled = []
+  end
+  
+  def embezzle(amout)
+    @embezzled << amount
+  end
+  
+  def embezzled_total
+    @embezzled.inject(0) {|sum, amount| sum+amount}
+  end
+end
+```
+
+Versus...
+```ruby
+class Employee
+  def initialize
+    @embezzled = nil
+  end
+  
+  def embezzle(amout)
+    (@embezzled ||= []) << amount
+  end
+  
+  def embezzled_total
+    (@embezzled || []).inject(0) {|sum, amount| sum+amount}
+  end
+end
+```
