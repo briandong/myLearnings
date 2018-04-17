@@ -5,7 +5,12 @@
 ## 基础
 ### 语法检索
 
-例如：
+生成索引：
+
+> $ rdoc --all --ri
+
+使用：
+
 > $ ri String
 
 > $ ri puts
@@ -326,5 +331,16 @@ end
 ```
 
 ### 宏
+attr_accessor这样的宏，其实是Kernel Module的一个方法
+
+```ruby
+class A
+end
+
+A.ancestors #=> [A, Object, Kernel, BasicObject]
+```
+
+
+
 Mix-in
 
