@@ -278,3 +278,51 @@ class Employee
   end
 end
 ```
+
+#### 嵌入C代码
+```ruby
+require "inline"
+
+inline do |builder|
+  builder.c "int func" {
+    ... #some c code
+  }
+end
+```
+
+## 元编程
+
+### 灵活的方法签名
+#### 默认值
+```ruby
+def rolecall(person1, person2 = "Dick", person3 = "Harry")
+  "#{person1}, #{person2} and #{person3}"
+end
+
+rolecall("Tom")         #=> "Tom, Dick and Harry"
+rolecall("George", 42)  #=> "George, 42 and Harry"
+```
+#### Hash参数
+```ruby
+def install_package(name, params = {})
+  path = (params[:path] || "/")
+  receipt = (params[:receipt] || true)
+  # do something with package name, path, and receipt flag
+end
+
+install_package("Tux Racer", :path => "/games") 等价于
+install_package("Tux Racer", {:path => "/games"})
+```
+#### method_missing
+Rails实例
+```ruby
+def method_missing(symbol, *args)
+  if symbol.to_s =~ /^find_by_(\w+)$/
+    fields = $1.split("_and_")
+    # build a query based on the fields and args (array)
+  else super
+  end
+end
+```
+
+### 宏
