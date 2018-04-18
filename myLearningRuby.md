@@ -390,3 +390,28 @@ ext_inst.check
 ext_inst.where_am_i #=> #<Ext:0x000000027fbe60>
 ```
 ### DSL
+
+```ruby
+class Server
+  def initialize(hostname)
+    @hostname = hostname
+	@sharepoints = {}
+  end
+
+  def shares(path, params)
+    (params[:over] || []).each do |protocol|
+      proto_shares = (@sharepoints[protocol] ||= {})
+	  share_id = (params[:as] || "UNKNOWN")
+	  proto_shares[share_id] = path
+	end
+  end
+end
+
+def server(hostname)
+  yield Server.new(hostname)
+end
+
+server "bitbucket.example.com" do |srv|
+  srv.shares "/homes", :over => ["afp", "smb], :as => "HOMES"
+end
+```
