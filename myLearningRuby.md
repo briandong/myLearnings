@@ -415,3 +415,118 @@ server "bitbucket.example.com" do |srv|
   srv.shares "/homes", :over => ["afp", "smb], :as => "HOMES"
 end
 ```
+
+## Gem
+
+### Website
+
+> www.rubygems.org
+
+### RubyGems
+
+#### 安装
+
+> $ ruby setup.rb
+
+#### 获取帮助
+
+> $ gem
+>
+> RubyGems is a sophisticated package manager for Ruby.  This is a
+> basic help message containing pointers to more information.
+>
+>   Usage:
+>     gem -h/--help
+>     gem -v/--version
+>     gem command [arguments...][options...]
+>
+>   Examples:
+>     gem install rake
+>     gem list --local
+>     gem build package.gemspec
+>     gem help install
+>
+>   Further help:
+>     gem help commands            list all 'gem' commands
+>     gem help examples            show some examples of usage
+>     gem help gem_dependencies    gem dependencies file guide
+>     gem help platforms           gem platforms guide
+>     gem help <COMMAND>           show help on COMMAND
+>                                    (e.g. 'gem help install')
+>     gem server                   present a web page at
+>                                  http://localhost:8808/
+>                                  with info about installed gems
+>   Further information:
+>     http://guides.rubygems.org
+
+
+
+gem_server
+
+> $ gem_server
+
+浏览器访问 localhost:8888
+
+#### 更新
+
+> $ gem update --system
+
+###gem包
+
+#### 搜索
+
+> $ gem search -r fish
+
+####安装 
+
+> $ gem install starfish -v 1.1.3
+
+#### 列出已安装的gem包
+
+> $ gem list
+
+#### 更新
+
+> $ gem update starfish -t -y
+
+#### 清除旧gem包
+
+清除全部gem库
+
+> $ gem cleanup 
+
+清除某个gem包
+
+> $ gem cleanup starfish
+
+#### 删除
+
+>  $ gem uninstall starfish
+
+#### 使用
+
+使用最新版本
+
+```ruby
+require "rubygems"
+require "starfish"
+```
+
+指定版本号
+
+```ruby
+gem "starfish", "1.1.3"
+```
+
+* "1.1.3", "= 1.1.3"
+* "! = 1.1.3"
+* "> 1.1.3", "> =1.1.3"
+* "< 1.1.3", "< =1.1.3"
+* "~ > 1.1.3": 近似大于，即"> 1.1.3"并且"< 1.2.0" (倒数第二位+1)
+
+### 创建gem
+
+Todo
+
+## Rake
+
