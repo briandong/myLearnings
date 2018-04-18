@@ -331,7 +331,7 @@ end
 ```
 
 ### 宏
-attr_accessor这样的宏，其实是Kernel Module的一个方法
+表面上attr_accessor这样的宏，其实是Kernel Module的一个方法
 
 ```ruby
 class A
@@ -340,7 +340,52 @@ end
 A.ancestors #=> [A, Object, Kernel, BasicObject]
 ```
 
+#### include module
 
+```ruby
+module M
+  def hi
+    puts "M: hello"
+  end
+end
 
-Mix-in
+class A
+  include M
+end
 
+A.new.hi #=> M: hello
+p A.ancestors #=> [A, M, Object, Kernel, BasicObject]
+```
+
+#### extend
+* include只会向类中加入实例方法，不会加入类方法
+* extend (定义于Object类)则会扩展目标，不管目标是实例还是类
+```ruby
+module M
+  def where_am_i
+    p self
+  end
+end
+
+class Inc
+  include M
+end
+
+Inc.where_am_i #=> [exception raised]
+
+class Empty
+end
+
+Empty.extend(M).where_am_i     #=> Empty
+Empty.new.extend(M).where_am_i #=> #<Empty:0x00000002a64cb0>
+
+class Ext
+  def check	
+    extend(M)
+  end
+end
+
+ext_inst = Ext.new
+ext_inst.check
+ext_inst.where_am_i #=> #<Ext:0x000000027fbe60>
+```
