@@ -389,3 +389,4 @@ ext_inst = Ext.new
 ext_inst.check
 ext_inst.where_am_i #=> #<Ext:0x000000027fbe60>
 ```
+### DSL
