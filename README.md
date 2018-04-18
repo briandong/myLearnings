@@ -5,9 +5,9 @@
 ## Programming
 
 ### Languages
+[Ruby](myLearningRuby.md)
 
 [Python](myLearningPython.md)
-
 [Numpy](myLearningNumpy.md)
 
 ### Version Control
