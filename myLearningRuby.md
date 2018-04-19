@@ -530,3 +530,78 @@ Todo
 
 ## Rake
 
+### 基本任务
+
+#### 设定缺省任务
+```ruby
+task :default => :test
+
+task :test do
+  ruby "tests/test1.rb"
+  ruby "tests/test2b.rb"
+end
+```
+
+#### 文件任务
+指定依赖文件，并根据时间戳确定目标文件是否需要更新
+```ruby
+file "index.yaml" => ["hosts.txt", "users.txt", "groups.txt"] do
+  ruby "build_index.rb"
+end
+```
+#### 确保目录存在
+```ruby
+directory "html/images"
+```
+
+#### 一般化规则
+```ruby
+rule ".o" => ".c" do |t|
+  sh "gcc", "-Wall", "-o", t.name, "-c", t.source
+end
+```
+
+#### 任务合成
+结合rule和FileList
+```ruby
+task :default => "cool_app"
+
+o_files = FileList["*.c"].exclude("main.c").sub(/c$/, "o")
+
+file "cool_app" => o_files do |t|
+  sh "gcc", "-Wall", "-o", t.name, *(t.sources)
+end
+
+rule ".o" => ".c" do |t|
+  sh "gcc", "-Wall", "-o", t.name, "-c", t.source
+end
+```
+对于上面两个非常相似的shell指令，可以定义方法重构
+```ruby
+def compile(target, sources, *flags)
+  sh "gcc", "-Wall", "-Werror", "-o", target, *(sources + flags)
+end
+```
+注意*会把item自动转换成为array。于是两个shell指令可以简化成
+```ruby
+compile(t.name, t.sources)
+compile(t.name, [t.source], "-c")
+```
+
+#### 自动生成任务列表
+使用desc增加任务描述
+```ruby
+desc "Run all unit tests"
+task :test do
+  # run the tests
+end
+
+desc "Build a performance profile"
+task :perf do
+  # build the profile
+end
+```
+
+> rake -T
+rake test # Run all unit tests
+rake perf # Build a performance profile
