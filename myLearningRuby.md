@@ -582,7 +582,8 @@ def compile(target, sources, *flags)
   sh "gcc", "-Wall", "-Werror", "-o", target, *(sources + flags)
 end
 ```
-注意*会把item自动转换成为array。于是两个shell指令可以简化成
+注意*会把item自动转换成为array。
+于是两个shell指令可以简化成
 ```ruby
 compile(t.name, t.sources)
 compile(t.name, [t.source], "-c")
@@ -603,5 +604,65 @@ end
 ```
 
 > rake -T
-rake test # Run all unit tests
-rake perf # Build a performance profile
+> rake test # Run all unit tests
+> rake perf # Build a performance profile
+
+## Unit Tests
+### Ruby的测试库
+```ruby
+require "test/unit"
+
+class MathTest < Test::Unit::TestCase
+  def test_add
+    assert_equal(2, 1+1)
+  end
+end
+```
+*Note: 以下指令可以获取更多断言方法
+> ri Test::Unit::Assertions
+
+### setup/teardown
+```ruby
+require "test/unit"
+
+class RemoteHostTest < Test::Unit::TestCase
+  def setup
+    @session = RemoteHost.new("testserver.example.org")
+  end
+  
+  def teardown
+    @session.close
+  end
+  
+  def test_echo
+    assert_equal("ping", @session.echo("ping").stdout)
+  end
+end
+```
+
+### suite
+```ruby
+require "test/unit"
+require "tc_math"
+require "tc_linalg"
+... 
+```
+### 使用rake测试
+
+```ruby
+Rake::TestTask.new do |t|
+  t.test_files = FileList["test/tc_*.rb"]
+end
+```
+会为rake增加test任务，并自动运行test_files。
+具体可以参考
+> ri Rake::TestTask
+
+如果所有测试通过则提交代码
+```ruby
+desc "Commit the current working copy if all tests pass"
+task :commit => :test do
+  sh "git", "commit"
+end
+```
+
