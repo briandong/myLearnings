@@ -530,9 +530,7 @@ Todo
 
 ## Rake
 
-### 基本任务
-
-#### 设定缺省任务
+### 设定缺省任务
 ```ruby
 task :default => :test
 
@@ -542,26 +540,27 @@ task :test do
 end
 ```
 
-#### 文件任务
+### 文件任务
 指定依赖文件，并根据时间戳确定目标文件是否需要更新
 ```ruby
 file "index.yaml" => ["hosts.txt", "users.txt", "groups.txt"] do
   ruby "build_index.rb"
 end
 ```
-#### 确保目录存在
+
+### 确保目录存在
 ```ruby
 directory "html/images"
 ```
 
-#### 一般化规则
+### 一般化规则
 ```ruby
 rule ".o" => ".c" do |t|
   sh "gcc", "-Wall", "-o", t.name, "-c", t.source
 end
 ```
 
-#### 任务合成
+### 任务合成
 结合rule和FileList
 ```ruby
 task :default => "cool_app"
@@ -589,7 +588,7 @@ compile(t.name, t.sources)
 compile(t.name, [t.source], "-c")
 ```
 
-#### 自动生成任务列表
+### 自动生成任务列表
 使用desc增加任务描述
 ```ruby
 desc "Run all unit tests"
