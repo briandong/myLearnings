@@ -666,3 +666,28 @@ task :commit => :test do
 end
 ```
 
+## rdoc
+
+### 基本使用
+
+为用户生成ri文档，存储在~/.rdoc
+> rdoc --ri *.rb
+
+为本机所有用户生成ri文档，需要系统权限
+> rdoc --ri-site *.rb
+
+* 只需要在rb文件里对应元素前增加注释即可，rdoc会把注释自动加入文档
+* 多行注释会在文档里变成一行
+
+### rake生成
+```ruby
+Rake::RDocTask.new do |t|
+  t.main = "README"
+  t.rdoc_files.include("README.rdoc", "lib/**/*.rb")
+  t.options << "--diagram"
+end
+```
+会为rake增加rdoc/clobber_rdoc/rerdoc任务。
+具体可以参考
+> ri Rake::RDocTask
+
