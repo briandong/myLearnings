@@ -606,6 +606,21 @@ end
 > rake test # Run all unit tests
 > rake perf # Build a performance profile
 
+### 任务间调用
+使用invoke可以调用其它rake任务
+```ruby
+desc "Run all unit tests"
+task :test do
+  # run the tests
+end
+
+desc "Build a performance profile"
+task :perf do
+  Rake::Task["test"].invoke
+  # build the profile
+end
+```
+
 ## Unit Tests
 ### Ruby的测试库
 ```ruby
