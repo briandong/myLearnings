@@ -103,6 +103,10 @@ end
 * -rlibrary: 执行代码前包含需要的库
 > $ ruby -rfileutils -e '...'
 
+### 为指定文件追加header信息
+为当前目录下所有sv/svh文件追加header，并备份原文件到bak文件
+> $ ruby -e 'Dir["**/*.sv", "**/*.svh"].each {|f| system "cp #{f} #{f}.bak; cat header.log #{f}.bak > #{f}"}]'
+
 ## 性能
 
 ### 性能分析
