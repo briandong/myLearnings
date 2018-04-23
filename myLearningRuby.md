@@ -616,7 +616,21 @@ end
 
 desc "Build a performance profile"
 task :perf do
-  Rake::Task["test"].invoke
+  Rake::Task[:test].invoke
+  # build the profile
+end
+```
+
+调用带参数的rake任务
+```ruby
+desc "Run all unit tests"
+task :test, [:name] do |t, args|
+  # run the tests
+end
+
+desc "Build a performance profile"
+task :perf do
+  Rake::Task[:test].invoke(name)
   # build the profile
 end
 ```
