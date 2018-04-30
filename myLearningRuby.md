@@ -639,7 +639,16 @@ task :perf do
 end
 ```
 
+### 系统指令调用
+
+```ruby
+task :lshome do
+  sh "cd && ls"
+end
+```
+
 ## Unit Tests
+
 ### Ruby的测试库
 ```ruby
 require "test/unit"
