@@ -1,6 +1,16 @@
-[toc]
+[TOC]
 
 # My Learning Git
+
+## 参考资料
+
+廖雪峰的git教程：
+
+https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
+
+特别是里面关于git诞生的有趣历史：
+
+https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/00137402760310626208b4f695940a49e5348b689d095fc000
 
 ## git基础
 
@@ -8,7 +18,7 @@
 
 #### website
 
-https://git-scm.com/downloads
+官网：https://git-scm.com/downloads
 
 #### linux
 
@@ -20,7 +30,7 @@ sudo apt-get install git
 ```
 #### windows
 
-直接下载安装可执行文件
+直接官网下载安装可执行文件
 
 ### config
 
@@ -43,8 +53,11 @@ git config --global color.ui auto
 
 设定别名
 ```
+git config --global alias.br branch
 git config --global alias.co checkout
+git config --global alias.ci commit
 git config --global alias.st status
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 ```
 
 查看配置信息
@@ -53,7 +66,14 @@ git config --global alias.st status
 git config --list
 ```
 
+### .gitignore 
+
+忽略某些文件时，需要编写.gitignore。
+
+不需要从头写.gitignore文件，GitHub已经为我们准备了各种配置文件，只需要组合一下就可以使用了：https://github.com/github/gitignore
+
 ### 获取帮助
+
 ```
 git help <verb>
 git <verb> --help
@@ -64,12 +84,12 @@ man git-<verb>
 
 ### 基本流程
 ```c
-Untracked  Unmodified(repo)  Modified  Staged
-   |------------------add---------------->|
-                |<---------commit---------|
-                |-----edit----->|---add-->|
-                                |<-reset--|
-                |<---reset --hard HEAD----|
+Untracked  Unmodified(repo)  Modified(unstaged)  Staged
+   |-----------------------add--------------------->|
+                |<--------------commit--------------|
+                |--------edit-------->|-----add---->|
+                |<----checkout -- ----|<---reset----|
+                |<--------reset --hard HEAD---------|
    |<----rm-----|
 ```
 ### init
@@ -132,25 +152,29 @@ git commit [-a] [-m "<comment>"] [--amend] [--no-edit]
 查看数据库的提交记录。
 - --graph，以文本形式显示更新记录的流程图
 - --oneline，在一行中显示提交的信息
+- -n，显示最近的n次commit
 ```
-git log [--graph] [--oneline]
+git log [--graph] [--oneline] [-n]
 ```
 
 ### reflog
 
-查看数据库的全部记录
+查看数据库的全部历史记录，包括被回退的版本
 ```
 git reflog
 ```
 
 ### reset
 
+reset用于版本回退。
+
 从staged状态reset回unstaged状态
 ```
-git reset <file>
+git reset HEAD <file>
 ```
 
-从staged状态reset回HEAD
+从staged状态reset回HEAD（HEAD表示当前版本，也就是最新的提交版本 ）
+
 ```
 git reset --hard HEAD
 ```
@@ -171,9 +195,9 @@ git reset --hard HEAD@{0}
 
 ### checkout
 
-回退文件到过去的版本
+撤销文件修改(checkout --)。checkout其实是用版本库里的版本替换工作区的版本，无论工作区是修改还是删除，都可以“一键还原”
 ```
-git checkout <ID> -- <file>
+git checkout -- <file>
 ```
 
 切换branch
@@ -182,11 +206,20 @@ git checkout <branch>
 ```
 
 ### stash
+stash功能，可以把当前工作现场“储藏”起来，等以后恢复现场后继续工作。
+
 建立一个暂存的文件空间
 ```
 git stash
 ```
+列出stash
+
+```
+git stash list
+```
+
 恢复修改
+
 ```
 git stash pop
 ```
@@ -203,12 +236,25 @@ git stash pop
 git branch <branch>
 ```
 
+
+
 新建branch并切换
+
 ```
 git checkout -b <branch>
 ```
 
+就相当于以下两条指令：
+
+```
+git branch <branch>
+git checkout <branch>
+```
+
+
+
 查看所有branch
+
 ```
 git branch
 ```
@@ -222,7 +268,9 @@ git checkout [-b] <branch>
 
 ### merge branch
 合并branch到master
-- --no-ff -m "<comment>"，no fast forward加入comment
+- --no-ff -m "<comment>"，no fast forward并加入comment
+  通常合并分支时，如果可能，Git会用Fast forward模式，但这种模式下删除分支后，会丢掉分支信息
+  禁用Fast forward模式，Git就会在merge时生成一个新的commit，这样，从分支历史上就可以看出分支信息
 ```
 git checkout master
 git merge [--no-ff -m "<comment>"] <branch>
@@ -249,62 +297,139 @@ git rebase <branch>
 git rebase --continue/skip/abort
 ```
 
+* rebase操作可以把本地未push的分叉提交历史整理成直线；
+* rebase的目的是使得我们在查看历史提交的变化时更容易，因为分叉的提交需要三方对比
+
 ### 删除branch
+
 删除branch
 ```
 git branch -d <branch>
 ```
+丢弃一个没有被合并过的分支
+```
+git branch -D <branch>
+```
 
 ## 远程数据库
-### push到远程数据库
-使用remote指令添加远程数据库。在name处输入远程数据库别名，在url处指定远程数据库的URL。
 
-如果code全新，未由git管理：
+### 添加远程数据库
+使用remote指令添加远程数据库，使用push命令向数据库推送更改内容。
+
+从全新repository开始：
 ```
+echo "# testit" >> README.md
 git init
-git add --all
-git commit -m "<comment>"
-git remote add <name> <url>
-```
-*Tips*:
-如果省略了远程数据库的名称，则默认使用名为”origin“的远程数据库
-
-例如：
-```
-git remote add origin ssh://git@sw-stash.freescale.net/~nxf06757/vim.config.git
-```
-
-如果code已经由git管理：
-```
-cd existing-project
-git remote set-url origin ssh://git@sw-stash.freescale.net/~nxf06757/vim.config.git
-```
-
-使用push命令向数据库推送更改内容，repository处输入目标地址，refspec处指定推送的分支
-```
-git push <repository> <refspec> ...
-```
-运行以下命令便可向远程数据库‘origin’进行推送。当执行命令时，如果指定了-u选项，那么下一次推送时就可以省略分支名称了。但是，首次运行指令向空的远程数据库推送时，必须指定远程数据库名称和分支名称
-```
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/briandong/testit.git
 git push -u origin master
 ```
 
-### 克隆远程数据库
-使用clone指令可以复制数据库，在repository指定远程数据库的URL，在directory指定新目录的名称
+由已有repository开始：
 ```
-git clone <repository> <directory>
+cd existing-project
+git remote add origin https://github.com/briandong/testit.git
+git push -u origin master
+```
+
+更改已有的远程数据库：
+
+```
+git remote set-url origin <url>
+```
+
+### 克隆远程数据库
+
+使用clone指令可以复制数据库
+```
+git clone https://github.com/briandong/testit.git
 ```
 
 ### 从远程数据库pull
 使用pull指令进行拉取操作。省略数据库名称的话，会在名为origin的数据库进行pull
 ```
-git pull <repository> <refspec> ...
+git pull
 ```
 
 ### 合并修改记录
 <<<<<<< HEAD 与 >>>>>>> 之间是冲突部分。
 
 ==分割线上方是本地数据库的内容, 下方是远程数据库的编辑内容。
+
+### 远程branch
+
+本地创建和远程分支关联的分支：
+```
+$ git checkout -b dev origin/dev
+```
+
+如果需要，建立本地分支和远程分支的关联
+```
+git branch --set-upstream branch-name origin/branch-name
+```
+
+## Tag
+
+注意：标签总是和某个commit挂钩。如果这个commit既出现在master分支，又出现在dev分支，那么在这两个分支上都可以看到这个标签
+
+### 新建tag
+
+```
+git tag v1.0
+```
+
+### 在指定commit ID上新建tag
+
+```
+git tag v0.9 f52c633
+```
+
+### 新建带有说明的tag
+
+```
+git tag -a v0.1 -m "version 0.1 released" 1094adb
+```
+
+### 查看tag信息
+
+```
+git show v0.9
+```
+
+### 查看所有tag
+
+```
+git tag
+```
+
+### 删除tag信息
+
+```
+git tag -d v0.1
+```
+
+ ### 推送tag到远程数据库
+
+```
+git push origin v1.0
+```
+
+### 推送所有tag到远程数据库
+
+```
+git push origin --tags
+```
+
+### 删除远程数据库tag 
+
+需要先删本地tag，再删除远程tag
+
+```
+git tag -d v0.9
+git push origin :refs/tags/v0.9
+```
+
 
 
 ## Github
