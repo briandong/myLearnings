@@ -339,6 +339,8 @@ git push -u origin master
 git remote set-url origin <url>
 ```
 
+*注意：第一次push master分支时，加上-u参数会把本地的master分支和远程的master分支关联起来，在以后的push时就可以简化命令不需要-u参数了*
+
 ### 克隆远程数据库
 
 使用clone指令可以复制数据库
