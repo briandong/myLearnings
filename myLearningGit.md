@@ -359,14 +359,29 @@ git pull
 
 ### 远程branch
 
+查看远程分支：
+```
+$ git branch -r
+```
+
 本地创建和远程分支关联的分支：
 ```
 $ git checkout -b dev origin/dev
 ```
 
-如果需要，建立本地分支和远程分支的关联
+如果需要，建立本地分支和远程分支的关联:
 ```
 git branch --set-upstream branch-name origin/branch-name
+```
+
+提交本地分支作为远程分支:
+```
+$ git push origin test:test
+```
+
+删除远程分支:
+```
+$ git push origin :test
 ```
 
 ## Tag
