@@ -93,6 +93,8 @@ load("//build_tools/rules:maprule.bzl", "maprule")
 ```
 This code will load the file build_tools/rules/maprule.bzl and add the maprule symbol to the environment. 
 
+This can be used to load new rules, functions or constants (e.g. a string, a list, etc.). 
+
 ## Skylark Language
 
 ### Overview
@@ -348,7 +350,7 @@ def _rule_implementation(ctx):
 
 Depsets are a specialized data structure for efficiently collecting data across a target’s transitive dependencies. 
 
-The main feature of depsets is that they support a time- and space-efficient merge operation, whose cost is independent of the size of the existing contents. Depsets also have well-defined ordering semantics.
+The main feature of depsets is that they support a time- and space-efficient **merge** operation, whose cost is independent of the size of the existing contents. Depsets also have well-defined ordering semantics.
 
 For example, in a .bzl file:
 
@@ -403,6 +405,8 @@ foo_binary = rule(
 )
 ```
 
+If you don't need the merge operation, consider using another type, such as list or dict.
+
 Refer to: 
 
 - https://docs.bazel.build/versions/master/skylark/depsets.html
@@ -430,7 +434,10 @@ print_aspect = aspect(
     attr_aspects = ['deps'],
 )
 ```
+Aspects are required to return a list of providers. In this example, the aspect does not provide anything, so it returns an empty list. 
+
 The simplest way to apply an aspect is from the command line using the --aspects argument. Assuming the rule above were defined in a file named print.bzl this:
+
 ```python
 bazel build //MyExample:example --aspects print.bzl%print_aspect
 ```
