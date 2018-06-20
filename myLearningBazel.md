@@ -139,8 +139,8 @@ load("//empty:empty.bzl", "empty")
 empty(name = "nothing")
 ```
 Refer to: 
-- https://docs.bazel.build/versions/master/skylark/rules.html
-- https://github.com/bazelbuild/examples/tree/master/rules
+- docs: https://docs.bazel.build/versions/master/skylark/rules.html
+- examples: https://github.com/bazelbuild/examples/tree/master/rules
 #### attribute 
 
 An attribute is a rule argument, such as srcs or deps. You must list the attributes and their types when you define a rule. Create attributes using the attr module.
@@ -416,32 +416,90 @@ Aspects allow augmenting build dependency graphs with additional information and
 
 Aspects are similar to rules in that they have an implementation function that generates actions and returns providers. However, their power comes from the way the dependency graph is built for them. An aspect has an implementation and a list of all attributes it propagates along. 
 
-This example demonstrates how to recursively print the source files for a rule and all of its dependencies that have a deps attribute. It shows an aspect implementation, an aspect definition, and how to invoke the aspect from the Bazel command line.
+The following example demonstrates using an aspect from a target rule that recursively counts files in targets, potentially filtering them by extension. It shows how to use a provider to return values, how to use parameters to pass an argument into an aspect implementation, and how to invoke an aspect from a rule.
+
+FileCount.bzl file:
 ```python
-def _print_aspect_impl(target, ctx):
+# provider
+FileCount = provider(
+    # It is best practice to explicitly define the fields of a provider 
+    # using the 'fields' attribute
+    fields = {
+        'count' : 'number of files'
+    }
+)
+
+# aspect implementation
+# takes two arguments:
+# * target - the target the aspect is being applied to
+# * ctx - ctx object that can be used to access attributes and generate outputs and actions
+def _file_count_aspect_impl(target, ctx):
+    count = 0
     # Make sure the rule has a srcs attribute.
     if hasattr(ctx.rule.attr, 'srcs'):
-        # Iterate through the files that make up the sources and
-        # print their paths.
+        # Iterate through the sources counting files
         for src in ctx.rule.attr.srcs:
             for f in src.files:
-                print(f.path)
-    return []
+                if ctx.attr.extension == '*' or ctx.attr.extension == f.extension:
+                    count = count + 1
+    # Get the counts from our dependencies.
+    for dep in ctx.rule.attr.deps:
+        count = count + dep[FileCount].count
+    # aspects are required to return a list of providers
+    return [FileCount(count = count)]
 
-print_aspect = aspect(
-    implementation = _print_aspect_impl,
-    # attr_aspects is a list of rule attributes along which the aspect propagates
+# aspect definition
+file_count_aspect = aspect(implementation = _file_count_aspect_impl,
+    # 'attr_aspects' is a list of rule attributes along which the aspect propagates
     attr_aspects = ['deps'],
+    # 'attrs' defines a set of attributes
+    attrs = {
+        'extension' : attr.string(values = ['*', 'h', 'cc']),
+    }
+)
+
+# invoke the aspect from a rule
+def _file_count_rule_impl(ctx):
+    for dep in ctx.attr.deps:
+        print(dep[FileCount].count)
+
+file_count_rule = rule(
+    implementation = _file_count_rule_impl,
+    attrs = {
+        'deps' : attr.label_list(aspects = [file_count_aspect]),
+        # set default value of parameter
+        'extension' : attr.string(default = '*'),
+    },
 )
 ```
-Aspects are required to return a list of providers. In this example, the aspect does not provide anything, so it returns an empty list. 
-
-The simplest way to apply an aspect is from the command line using the --aspects argument. Assuming the rule above were defined in a file named print.bzl this:
-
+BUILD.bazel file:
 ```python
-bazel build //MyExample:example --aspects print.bzl%print_aspect
+load('//file_count.bzl', 'file_count_rule')
+
+cc_library(
+    name = 'lib',
+    srcs = [
+        'lib.h',
+        'lib.cc',
+    ],
+)
+
+cc_binary(
+    name = 'app',
+    srcs = [
+        'app.h',
+        'app.cc',
+        'main.cc',
+    ],
+    deps = ['lib'],
+)
+
+file_count_rule(
+    name = 'file_count',
+    deps = ['app'],
+    extension = 'h',
+)
 ```
-would apply the print_aspect to the target example and all of the target rules that are accessible recursively via the deps attribute.
 
 Refer to: 
 
