@@ -18,6 +18,8 @@ Each workspace directory has a text file named WORKSPACE which may be empty, or 
 
 A package is defined as a directory containing a file named BUILD, residing beneath the top-level directory in the workspace. 
 
+A package includes all files in its directory, plus all subdirectories beneath it, except those which themselves contain a BUILD file. 
+
 ### Target
 
 The elements of a package are called targets. Most targets are one of two principal kinds, files and rules.
@@ -27,8 +29,20 @@ The elements of a package are called targets. Most targets are one of two princi
 All targets belong to exactly one package. The name of a target is called its label, and a typical label in canonical form looks like this:
 
 ```python
-//path/to/target:target_name
+//path/to/package:target
+for example:
+//my/app/main:app_binary
 ```
+Each label has two parts, a package name (my/app/main) and a target name (app_binary).
+
+The label for a file without package:
+
+```
+//:path/to/file
+```
+
+
+
 
 ## Key Files
 
@@ -83,6 +97,24 @@ A build consists of three phases.
 
 * -s: show subcommands
 * --test_output=<summary|errors|all|streamed> (default: "summary")
+
+## Test
+
+Ref: https://docs.bazel.build/versions/master/test-encyclopedia.html
+
+### timeout
+
+```
+  --test_timeout
+    (a single integer or comma-separated list of 4 integers; default: "-1")
+    Override the default test timeout values for test timeouts (in secs). If a 
+    single positive integer value is specified it will override all 
+    categories.  If 4 comma-separated integers are specified, they will 
+    override the timeouts for short, moderate, long and eternal (in that 
+    order). In either form, a value of -1 tells blaze to use its default 
+    timeouts for that category.
+```
+
 
 
 ## Output Layout
