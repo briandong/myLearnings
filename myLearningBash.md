@@ -6,6 +6,21 @@
 
 [.bashrc](.bashrc)
 
+## basic
+
+### if elif else fi
+```
+typ=bird
+
+if [ $typ == "cat" ]; then
+  echo "I love cats"
+elif [ $typ == "dog" ]; then
+  echo "I love dogs"
+else
+  echo "I love ${typ}s"
+fi
+```
+
 ## Tips
 
 ### #{}
@@ -61,3 +76,9 @@ line1 line2 line3
 line4
 ```
 
+### create file
+```
+cat <<EOF > hello.py
+print("hello world!")
+EOF
+```
