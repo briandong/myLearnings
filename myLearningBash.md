@@ -12,9 +12,9 @@
 ```
 typ=bird
 
-if [ $typ == "cat" ]; then
+if [[ $typ == "cat" ]]; then
   echo "I love cats"
-elif [ $typ == "dog" ]; then
+elif [[ $typ == "dog" ]]; then
   echo "I love dogs"
 else
   echo "I love ${typ}s"

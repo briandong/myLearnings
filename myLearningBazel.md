@@ -119,6 +119,16 @@ Ref: https://docs.bazel.build/versions/master/test-encyclopedia.html
 
 ## Output Layout
 
+Generated output directories:
+
+```
+bazel-soc ->      /data/.../execroot/soc  #symlink to execroot, work dir for all actions
+bazel-out ->      /data/.../execroot/soc/bazel-out  #symlink to output path
+bazel-bin ->      /data/.../execroot/soc/bazel-out/k8-fastbuild/bin  #symlink to written bin dir
+bazel-genfiles -> /data/.../execroot/soc/bazel-out/k8-fastbuild/genfiles  #symlink to written genfile dir
+bazel-testlogs -> /data/.../execroot/soc/bazel-out/k8-fastbuild/testlogs  #symlink to test logs
+```
+
 Refer to: 
 
 - https://docs.bazel.build/versions/master/output_directories.html
