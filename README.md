@@ -1,22 +1,22 @@
 [TOC]
 
-# myLearnings
+# My Learnings
 
 ## Programming
 
 ### Languages
-[Ruby](myLearningRuby.md)
+[Ruby](ruby.md)
 
-[Python](myLearningPython.md)
-[Numpy](myLearningNumpy.md)
+[Python](python.md)
+[Numpy](numpy.md)
 
 ### Version Control
 
-[Git](myLearningGit.md)
+[Git](git.md)
 
 ### Shell
 
-[Bash](myLearningBash.md)
+[Bash](bash.md)
 
 ### Build
-[Bazel](myLearningBazel.md)
+[Bazel](bazel.md)
