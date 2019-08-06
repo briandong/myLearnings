@@ -80,41 +80,89 @@ trap _exit EXIT
 #-------------------
 # Personnal Aliases
 #-------------------
+# history
+alias h='history'
 
+# prevents accidentally clobbering files
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
-# -> Prevents accidentally clobbering files.
+
+# mkdir
 alias mkdir='mkdir -p'
 
-alias h='history'
+# ls
+alias ll='ls -lv --group-directories-first'
+alias la='ll -A'
+
+# cd
+alias ..="cd .." 
+alias ...="cd ../.." 
+alias ....="cd ../../.." 
+alias .....="cd ../../../.." 
+alias ......="cd ../../../../.." 
+
 alias j='jobs -l'
 alias which='type -a'
-
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
 
 # Pretty-print of some PATH variables:
 alias path='echo -e ${PATH//:/\\n}'
 alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 
-alias du='du -kh'    # Makes a more readable output.
+# Makes a more readable output
+alias du='du -kh'
 alias df='df -kTh'
 
 #-------------------
 # Tool Aliases
 #-------------------
-
+# tools
+alias b='bazel'
 alias c='ctags'
 alias g='git'
+alias j='jupyter-notebook &'
 alias p='python'
 alias r='ruby'
-alias t='typora'
+alias t='Typora'
 alias v='gVimPortable'
+
+# git
+alias ugcl='git clone'
+alias ugin='git init'
+alias ugad='git add'
+alias ugmv='git mv'
+alias ugrs='git reset'
+alias ugrm='git rm'
+alias uglg='git log'
+alias ugsh='git show'
+alias ugst='git status'
+alias ugbr='git branch'
+alias ugco='git checkout'
+alias ugcm='git commit'
+alias ugdf='git diff'
+alias ugdt='git difftool'
+alias ugmg='git merge'
+alias ugmt='git mergetool'
+alias ugrb='git rebase'
+alias ugtg='git tag'
+alias ugpr='git pull --rebase'
+alias ugps='git push'
+alias ugsb='git submodule'
+alias ugcf='git config'
+alias ugrt='git remote'
+alias ugss='git stash'
+alias ugrp='git rev-parse'
+alias uggr='git grep'
+alias ugcn='git clean'
+alias ughp='git help'
+alias ugsbup='ugsb update --init --remote --recursive'
 
 #-------------------
 # Path
 #-------------------
-
-export PATH=$PATH:/C/Program\ Files/Typora
+export PATH=$PATH:/c/Ruby23-x64/bin
+export PATH=$PATH:/c/Program\ Files/Typora
+export PATH=$PATH:/e/data/tools/ctags
+export PATH=$PATH:/e/data/tools/portableApps/PortableApps/gVimPortable
+export PATH=$PATH:~/bin
+export BAZEL_VC=/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio/2017/BuildTools/VC
